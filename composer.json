@@ -9,7 +9,7 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
-            "": "src/",
+            "": "src/"
         },
         "files": [
             "scaffold-command.php"
