@@ -24,7 +24,7 @@
         },
         "bundled": true,
         "commands": [
-            "scaffold package-readme",
+            "scaffold package-readme"
         ]
     }
 }
