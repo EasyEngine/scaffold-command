@@ -1,0 +1,24 @@
+{
+    "name": "easyengine/scaffold-command",
+    "description": "",
+    "type": "ee-cli-package",
+    "homepage": "https://github.com/easyengine/scaffold-command",
+    "license": "MIT",
+    "authors": [],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "": "src/",
+        },
+        "files": [
+            "scaffold-command.php"
+        ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.x-dev"
+        },
+        "bundled": true
+    }
+}
