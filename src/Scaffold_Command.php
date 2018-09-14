@@ -62,7 +62,7 @@ class Scaffold_Command extends EE_Command {
 			'package_description' => isset( $composer_obj['description'] ) ? $composer_obj['description'] : '',
 			'shields'             => '',
 			'has_commands'        => false,
-			'ee_update_to_instructions' => 'the latest stable release with `wp cli update`',
+			'ee_update_to_instructions' => 'the latest stable release with `ee cli update`',
 			'show_powered_by'     => isset( $composer_obj['extra']['readme']['show_powered_by'] ) ? (bool) $composer_obj['extra']['readme']['show_powered_by'] : true,
 		);
 
