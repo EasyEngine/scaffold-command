@@ -9,7 +9,7 @@ class Scaffold_Command extends EE_Command {
 	 * Generate a README.md for your command.
 	 *
 	 * Creates a README.md with Using, Installing, and Contributing instructions
-	 * based on the composer.json file for your EE package. Run this command
+	 * based on the composer.json file for your EasyEngine package. Run this command
 	 * at the beginning of your project, and then every time your usage docs
 	 * change.
 	 *

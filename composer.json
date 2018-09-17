@@ -1,6 +1,6 @@
 {
     "name": "easyengine/scaffold-command",
-    "description": "Scaffolds EE commands with README.md",
+    "description": "Scaffolds EasyEngine commands with README.md",
     "type": "ee-cli-package",
     "homepage": "https://github.com/easyengine/scaffold-command",
     "support": {
