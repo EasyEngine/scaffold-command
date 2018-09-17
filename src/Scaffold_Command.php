@@ -51,19 +51,19 @@ class Scaffold_Command extends EE_Command {
 
 		$force = Utils\get_flag_value( $assoc_args, 'force' );
 
-		$package_root = dirname( dirname( __FILE__ ) );
+		$package_root  = dirname( dirname( __FILE__ ) );
 		$template_path = $package_root . '/templates/';
 
-		$bits = explode( '/', $composer_obj['name'] );
+		$bits        = explode( '/', $composer_obj['name'] );
 		$readme_args = array(
-			'package_name'        => $composer_obj['name'],
-			'package_short_name'  => $bits[1],
-			'package_name_border' => str_pad( '', strlen( $composer_obj['name'] ), '=' ),
-			'package_description' => isset( $composer_obj['description'] ) ? $composer_obj['description'] : '',
-			'shields'             => '',
-			'has_commands'        => false,
+			'package_name'              => $composer_obj['name'],
+			'package_short_name'        => $bits[1],
+			'package_name_border'       => str_pad( '', strlen( $composer_obj['name'] ), '=' ),
+			'package_description'       => isset( $composer_obj['description'] ) ? $composer_obj['description'] : '',
+			'shields'                   => '',
+			'has_commands'              => false,
 			'ee_update_to_instructions' => 'the latest stable release with `ee cli update`',
-			'show_powered_by'     => isset( $composer_obj['extra']['readme']['show_powered_by'] ) ? (bool) $composer_obj['extra']['readme']['show_powered_by'] : true,
+			'show_powered_by'           => isset( $composer_obj['extra']['readme']['show_powered_by'] ) ? (bool) $composer_obj['extra']['readme']['show_powered_by'] : true,
 		);
 
 		if ( isset( $composer_obj['extra']['readme']['shields'] ) ) {
@@ -84,24 +84,44 @@ class Scaffold_Command extends EE_Command {
 
 		if ( ! empty( $composer_obj['extra']['commands'] ) ) {
 			$readme_args['commands'] = array();
-			$cmd_dump = EE::runcommand( 'site cmd-dump', array( 'launch' => false, 'return' => true, 'parse' => 'json' ) );
-			foreach( $composer_obj['extra']['commands'] as $command ) {
-				$bits = explode( ' ', $command );
+			$cmd_args                = [
+				'launch' => false,
+				'return' => true,
+				'parse'  => 'json',
+			];
+
+			$cmd_dump = EE::runcommand( 'site cmd-dump', $cmd_args );
+			foreach ( $composer_obj['extra']['commands'] as $command ) {
+				$bits           = explode( ' ', $command );
 				$parent_command = $cmd_dump;
 				do {
-					$cmd_bit = array_shift( $bits );
+					$site_types  = [ '--type=html', '--type=wp', '--type=php' ];
+					$common_type = array_intersect( $site_types, $bits );
+
+					// if parent command is 'site' then append '--type=*' with 'create' subcommand
+					if ( 'site' === $parent_command['name'] && ! empty( $common_type ) ) {
+
+						$common_type = array_values( $common_type );
+						$cmd_bit     = "create $common_type[0]";
+						// make bitz empty
+						$bits = [];
+
+					} else {
+						$cmd_bit = array_shift( $bits );
+					}
+
 					$found = false;
-					foreach( $parent_command['subcommands'] as $subcommand ) {
+					foreach ( $parent_command['subcommands'] as $subcommand ) {
 						if ( $subcommand['name'] === $cmd_bit ) {
 							$parent_command = $subcommand;
-							$found = true;
+							$found          = true;
 							break;
 						}
 					}
 					if ( ! $found ) {
 						$parent_command = false;
 					}
-				} while( $parent_command && $bits );
+				} while ( $parent_command && $bits );
 
 				if ( empty( $parent_command ) ) {
 					EE::error( 'Missing one or more commands defined in composer.json -> extra -> commands.' );
@@ -114,13 +134,13 @@ class Scaffold_Command extends EE_Command {
 				$longdesc = preg_replace_callback( '/([^\n]+)\n: (.+?)(\n\n|$)/s', array( __CLASS__, 'rewrap_param_desc' ), $longdesc );
 
 				$readme_args['commands'][] = array(
-					'name' => "ee {$command}",
+					'name'      => "ee {$command}",
 					'shortdesc' => $parent_command['description'],
-					'synopsis' => "ee {$command}" . ( empty( $parent_command['subcommands'] ) ? " {$parent_command['synopsis']}" : "" ),
-					'longdesc' => $longdesc,
+					'synopsis'  => "ee {$command}" . ( empty( $parent_command['subcommands'] ) ? " {$parent_command['synopsis']}" : '' ),
+					'longdesc'  => $longdesc,
 				);
 			}
-			$readme_args['has_commands'] = true;
+			$readme_args['has_commands']          = true;
 			$readme_args['has_multiple_commands'] = count( $readme_args['commands'] ) > 1 ? true : false;
 		}
 
@@ -135,14 +155,14 @@ class Scaffold_Command extends EE_Command {
 		}
 
 		$readme_sections = array();
-		foreach( $readme_section_headings as $section_heading ) {
-			$key = strtolower( preg_replace( '#[^\da-z-_]#i', '', $section_heading ) );
+		foreach ( $readme_section_headings as $section_heading ) {
+			$key                     = strtolower( preg_replace( '#[^\da-z-_]#i', '', $section_heading ) );
 			$readme_sections[ $key ] = array(
-				'heading'      => $section_heading,
+				'heading' => $section_heading,
 			);
 		}
 		$bundled = ! empty( $composer_obj['extra']['bundled'] );
-		foreach( array( 'using', 'contributing', 'support' ) as $key ) {
+		foreach ( array( 'using', 'contributing', 'support' ) as $key ) {
 			if ( isset( $readme_sections[ $key ] ) ) {
 				$file = dirname( dirname( __FILE__ ) ) . '/templates/readme-' . $key . '.mustache';
 				if ( $bundled
@@ -158,7 +178,7 @@ class Scaffold_Command extends EE_Command {
 		);
 
 		$readme_args['quick_links'] = '';
-		foreach( $readme_sections as $key => $section ) {
+		foreach ( $readme_sections as $key => $section ) {
 			if ( ! empty( $section['heading'] ) ) {
 				$readme_args['quick_links'] .= '[' . $section['heading'] . '](#' . $key . ') | ';
 			}
@@ -168,20 +188,20 @@ class Scaffold_Command extends EE_Command {
 		}
 
 		$readme_args['sections'] = array();
-		$ext_regex = '#\.(md|mustache)$#i';
-		foreach( $readme_sections as $section => $section_args ) {
+		$ext_regex               = '#\.(md|mustache)$#i';
+		foreach ( $readme_sections as $section => $section_args ) {
 			$value = array();
-			foreach( array( 'pre', 'body', 'post' ) as $k ) {
+			foreach ( array( 'pre', 'body', 'post' ) as $k ) {
 				$v = '';
 				if ( isset( $composer_obj['extra']['readme'][ $section ][ $k ] ) ) {
-					$v = $composer_obj['extra']['readme'][ $section][ $k ];
+					$v = $composer_obj['extra']['readme'][ $section ][ $k ];
 					if ( false !== stripos( $v, '://' ) ) {
 						$response = Utils\http_request( 'GET', $v );
-						$v = $response->body;
-					} else if ( preg_match( $ext_regex, $v ) ) {
+						$v        = $response->body;
+					} elseif ( preg_match( $ext_regex, $v ) ) {
 						$v = $package_dir . '/' . $v;
 					}
-				} else if ( isset( $section_args[ $k ] ) ) {
+				} elseif ( isset( $section_args[ $k ] ) ) {
 					$v = $section_args[ $k ];
 				}
 				if ( $v ) {
@@ -196,8 +216,8 @@ class Scaffold_Command extends EE_Command {
 				$readme_args['package_description'] = $value;
 			} else {
 				$readme_args['sections'][] = array(
-					'heading'      => $section_args['heading'],
-					'body'         => $value,
+					'heading' => $section_args['heading'],
+					'body'    => $value,
 				);
 			}
 		}
@@ -215,7 +235,7 @@ class Scaffold_Command extends EE_Command {
 
 	private static function rewrap_param_desc( $matches ) {
 		$param = $matches[1];
-		$desc = self::indent( "\t\t", $matches[2] );
+		$desc  = self::indent( "\t\t", $matches[2] );
 		return "\t$param\n$desc\n\n";
 	}
 
