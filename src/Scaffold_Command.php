@@ -69,12 +69,13 @@ class Scaffold_Command extends EE_Command {
 		if ( isset( $composer_obj['extra']['readme']['shields'] ) ) {
 			$readme_args['shields'] = implode( ' ', $composer_obj['extra']['readme']['shields'] );
 		} else {
-			$shields = array();
+			$shields      = array();
+			$package_name = str_replace( 'easyengine', 'EasyEngine', $readme_args['package_name'] );
 			if ( file_exists( $package_dir . '/.travis.yml' ) ) {
-				$shields[] = "[![Build Status](https://travis-ci.org/{$readme_args['package_name']}.svg?branch=master)](https://travis-ci.org/{$readme_args['package_name']})";
+				$shields[] = "[![Build Status](https://travis-ci.org/{$package_name}.svg?branch=master)](https://travis-ci.org/{$package_name})";
 			}
 			if ( file_exists( $package_dir . '/circle.yml' ) ) {
-				$shields[] = "[![CircleCI](https://circleci.com/gh/{$readme_args['package_name']}/tree/master.svg?style=svg)](https://circleci.com/gh/{$readme_args['package_name']}/tree/master)";
+				$shields[] = "[![CircleCI](https://circleci.com/gh/{$package_name}/tree/master.svg?style=svg)](https://circleci.com/gh/{$package_name}/tree/master)";
 			}
 
 			if ( count( $shields ) ) {
