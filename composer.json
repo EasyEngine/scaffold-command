@@ -1,8 +1,11 @@
 {
     "name": "easyengine/scaffold-command",
-    "description": "",
+    "description": "Scaffolds EasyEngine commands with README.md",
     "type": "ee-cli-package",
     "homepage": "https://github.com/easyengine/scaffold-command",
+    "support": {
+        "issues": "https://github.com/easyengine/scaffold-command/issues"
+    },
     "license": "MIT",
     "authors": [],
     "minimum-stability": "dev",
@@ -19,6 +22,9 @@
         "branch-alias": {
             "dev-master": "1.x-dev"
         },
-        "bundled": true
+        "bundled": true,
+        "commands": [
+            "scaffold package-readme"
+        ]
     }
 }
